@@ -32,6 +32,7 @@ import json
 from time import sleep
 import os
 import openai
+import logging
 from flowcluster.ai.templates import (
     NATURAL_LANGUAGE_QUERY_SYSTEM_PROMPT,
     NATURAL_LANGUAGE_QUERY_USER_PROMPT,
@@ -145,7 +146,8 @@ class AnalyzeViewset(GenericViewSet):
         try:
             query_result = run_query(request.data["sql"], query_id=query_id, use_cache=False, substitute_params=False)
         except Exception as e:
-            return Response(status=418, data={"error": str(e)})
+            logger.exception("Exception occurred in query endpoint")
+            return Response(status=418, data={"error": "An internal error has occurred."})
         return Response({"result": query_result})
 
     @action(detail=False, methods=["GET"])
